@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  docuquery:
+    build: .
+    container_name: docuquery-rag
+    ports:
+      - "8002:8002"
+    volumes:
+      - docuquery-data:/app/backend/data
+    environment:
+      - PORT=8002
+      - ENVIRONMENT=production
+    restart: unless-stopped
+
+volumes:
+  docuquery-data:

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuQuery — Production RAG Research Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="docu-app">
+        <!-- Top Banner -->
+        <header class="docu-header">
+            <div class="header-left">
+                <span class="engine-badge">RAG LAB</span>
+                <div>
+                    <h1 class="header-title">DocuQuery</h1>
+                    <span class="header-subtitle">Cited Question-Answering & Grounding Guardrails</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="guardrail-badge">
+                    <span class="guard-dot"></span>
+                    <span>HALLUCINATION GUARDRAILS ENFORCED</span>
+                </div>
+                <button id="btn-upload-modal" class="btn-primary-action">+ Ingest Document</button>
+            </div>
+        </header>
+
+        <!-- 3-Column Research Workspace -->
+        <div class="workspace-grid">
+            <!-- Left: Document Corpus -->
+            <aside class="corpus-panel">
+                <div class="panel-top">
+                    <span class="panel-label">INDEXED CORPUS</span>
+                    <span id="corpus-stats" class="stats-label">0 Documents</span>
+                </div>
+                <div id="corpus-list" class="corpus-scroll">
+                    <!-- Populated dynamically -->
+                </div>
+                <div class="corpus-footer">
+                    <div class="chunk-telemetry">
+                        <span class="telemetry-title">Embedding Engine:</span>
+                        <span class="telemetry-value">128-D Subword N-gram Cosine</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center: Inquiry & Answer Workspace -->
+            <main class="inquiry-panel">
+                <div class="query-box">
+                    <label class="query-label">RESEARCH INQUIRY</label>
+                    <div class="query-input-wrap">
+                        <textarea id="question-input" rows="2" placeholder="Ask a question grounded in the ingested corpus (e.g. 'How do surface codes protect qubits?', 'What are Byzantine fault thresholds?')..."></textarea>
+                        <button id="btn-ask" class="btn-ask">Evaluate Query</button>
+                    </div>
+                    <div class="query-hints">
+                        <span>Sample prompts:</span>
+                        <button class="hint-pill" data-q="What is the fault-tolerance threshold in distributed consensus?">Consensus Fault-Tolerance</button>
+                        <button class="hint-pill" data-q="How do surface codes detect physical qubit errors?">Quantum Surface Codes</button>
+                    </div>
+                </div>
+
+                <div class="answer-section">
+                    <div class="answer-top">
+                        <span class="section-label">GROUNDED SYNTHESIS</span>
+                        <div id="answer-metrics" class="answer-meta" style="display:none;">
+                            <span id="metric-confidence" class="metric-chip">Confidence: --</span>
+                            <span id="metric-eval" class="metric-chip">Evaluated: --</span>
+                        </div>
+                    </div>
+                    
+                    <div id="answer-container" class="answer-card">
+                        <div class="empty-answer">
+                            Submit a research question above. DocuQuery will retrieve the highest-scoring vector passages and synthesize a citation-grounded response.
+                        </div>
+                    </div>
+
+                    <div id="hallucination-warning" class="hallucination-banner" style="display: none;">
+                        <span class="alert-icon">🛡️</span>
+                        <div>
+                            <strong>Hallucination Guardrail Triggered:</strong>
+                            <p id="hallucination-text"></p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right: Provenance Inspector -->
+            <aside class="provenance-panel">
+                <div class="panel-top">
+                    <span class="panel-label">SOURCE PROVENANCE INSPECTOR</span>
+                    <span id="citation-count" class="stats-label">0 Sources</span>
+                </div>
+                <div id="citations-list" class="provenance-scroll">
+                    <div class="empty-citations">
+                        Click on any citation footnote tag in the synthesis to inspect the exact verbatim chunk passage.
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Document Ingestion Modal -->
+    <div id="upload-modal" class="modal-backdrop">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Ingest Research Document</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <form id="upload-form" class="modal-body">
+                <div class="form-field">
+                    <label>Document Title</label>
+                    <input type="text" id="doc-title" required placeholder="e.g. Distributed Consensus in Asynchronous Networks">
+                </div>
+                <div class="form-field">
+                    <label>Filename Identifier</label>
+                    <input type="text" id="doc-filename" placeholder="e.g. paxos_async.txt">
+                </div>
+                <div class="form-field">
+                    <label>Document Content (Plain Text or Markdown)</label>
+                    <textarea id="doc-content" required rows="7" placeholder="Paste full whitepaper, specifications, or notes here. DocuQuery will automatically perform sliding-window chunking."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-cancel-modal" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-submit">Chunk & Index Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
